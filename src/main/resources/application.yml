@@ -1,0 +1,11 @@
+server:
+  port: 8070
+
+
+
+apiGateway: http://localhost:8060
+
+oauth:
+  tokenUrl: ${apiGateway}/oauth/token
+  clientId: covid-19-data-system
+  clientSecret: 123456
