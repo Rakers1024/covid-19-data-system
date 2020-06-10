@@ -8,10 +8,10 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 @SpringBootApplication
 @EnableDiscoveryClient
 @EnableFeignClients
-public class ETsvApplication {
+public class EfTsvApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(ETsvApplication.class, args);
+		SpringApplication.run(EfTsvApplication.class, args);
 	}
 
 }

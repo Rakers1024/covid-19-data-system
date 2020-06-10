@@ -29,9 +29,11 @@ public class AppInitializerComponent implements Constants {
         new Thread(new Runnable() {
             @Override
             public void run() {
+                logger.info("开始同步");
                 virusData.setData(VIRUS_DATA_URL, true);
                 virusData.setDeathData(DEATH_DATA_URL, true);
                 virusData.setCountryDataMap();
+                logger.info("同步完成");
             }
         }).start();
     }

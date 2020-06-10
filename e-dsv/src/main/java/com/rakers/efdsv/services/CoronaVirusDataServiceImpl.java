@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.io.StringReader;
 import java.net.ConnectException;
+import java.net.UnknownHostException;
 import java.util.Iterator;
 
 @Service
@@ -25,12 +26,15 @@ public class CoronaVirusDataServiceImpl implements CoronaVirusDataService, Const
 
     @Override
     public String fetchVirusData(String uri, boolean isSyn) {
-        logger.info("开始同步数据");
         String apiOutput = null;
         try (CloseableHttpClient httpClient = HttpClientBuilder.create().build()) {
             HttpGet getRequest = new HttpGet(uri);
             HttpResponse response = null;
-            response = httpClient.execute(getRequest);
+            try {
+                response = httpClient.execute(getRequest);
+            } catch (UnknownHostException e) {
+                logger.error("网络错误，raw.githubusercontent.com解析失败，需要翻墙");
+            }
             int statusCode = NOT_FOUND;
             if (response != null && response.getStatusLine() != null)
                 statusCode = response.getStatusLine().getStatusCode();
@@ -41,12 +45,10 @@ public class CoronaVirusDataServiceImpl implements CoronaVirusDataService, Const
             apiOutput = EntityUtils.toString(httpEntity);
 //            vot.set(uri, apiOutput, TIME_OUT, TimeUnit.SECONDS);
         }catch (ConnectException e) {
-            logger.error("数据同步失败");
+            throw new APIRuntimeException("ConnectException error", e);
         }catch (Exception e) {
-            logger.error("数据同步失败");
             throw new APIRuntimeException(e);
         }
-        logger.info("数据同步成功");
         return apiOutput;
 //        logger.info("开始获取数据");
 //        ValueOperations<String, String> vot = stringRedisTemplate.opsForValue();

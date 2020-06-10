@@ -30,15 +30,18 @@ public class HomeController {
     public String home(Model model) {
         try {
             Map<String, Object> dataMap = this.client.getForEntity(URL_DSV, Map.class).getBody();
+            logger.info("通过API网关获取到的数据"+dataMap);
             List<Map<String, Object>> countryStats = (List<Map<String, Object>>)dataMap.get("locationsStats");
             for (Map<String, Object> countryStat : countryStats) {
                 countryStat.put("country", this.client.getForEntity(URL_TSV_TEXT, String.class, countryStat.get("country")).getBody());
             }
+            logger.info("通过API网关翻译后的数据"+countryStats);
             model.addAttribute("locationsStats", countryStats);
             model.addAttribute("totalReportedCases", dataMap.get("totalReportedCases"));
             model.addAttribute("totalNewCases", dataMap.get("totalNewCases"));
             model.addAttribute("totalDeaths", dataMap.get("totalDeaths"));
             model.addAttribute("totalDeathsToday", dataMap.get("totalDeathsToday"));
+            logger.info("页面数据"+model);
         }catch (Exception e){
             throw new APIRuntimeException(e);
         }
