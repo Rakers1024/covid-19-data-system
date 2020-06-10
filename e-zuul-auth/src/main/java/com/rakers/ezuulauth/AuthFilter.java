@@ -4,6 +4,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.netflix.zuul.filters.support.FilterConstants;
 import org.springframework.cloud.netflix.zuul.util.ZuulRuntimeException;
@@ -27,6 +28,9 @@ public class AuthFilter extends ZuulFilter {
 
 	@Value("${auth.checkAuthUrl}")
 	private String checkAuthUrl;
+
+	@Autowired
+	private RestTemplate client;
 	
 	@Override
 	public boolean shouldFilter() {
@@ -56,7 +60,9 @@ public class AuthFilter extends ZuulFilter {
 			}
 			
 			String authUrl = this.checkAuthUrl + "?access_token=" + token + "&uri=" + uri;
-			boolean canCall = new RestTemplate().getForObject(authUrl, Boolean.class);
+			log.info("url "+authUrl);
+//			boolean canCall = new RestTemplate().getForObject(authUrl, Boolean.class);
+			boolean canCall = client.getForObject(authUrl, Boolean.class);
 			log.info("是否允许 "+canCall);
 			if(!canCall) {
 				throw new ZuulRuntimeException(new ZuulException(null, "Service endpoint unauthorized: "

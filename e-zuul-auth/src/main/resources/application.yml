@@ -11,7 +11,7 @@ eureka:
          defaultZone: http://127.0.0.1:8010/eureka
 
 auth:
-   checkAuthUrl: http://localhost:8080/oauth/check_auth
+   checkAuthUrl: http://auth-service/oauth/check_auth
 
 ribbon:
    ReadTimeout: 30000
